@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Зборко</title>
+    <style>
+	body {
+		font-family: sans-serif;
+		overflow-x: hidden;
+		background: #8578d5;
+	}
+	.container {
+		width: 95%;
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+	p.upatstvo {
+		font-size: 14px;
+		line-height: 18px;
+		text-align: justify;
+	}
+	div#letters {
+		margin-bottom: 20px;
+		background: #8578d5;
+		padding: 20px;
+		text-align: center;
+		height: 78px;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+	div#selectedLetters {
+		margin-bottom: 20px;
+		background: #6559b0;
+		padding: 20px;
+		text-align: center;
+		height: 78px;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+	#letters div {
+		border: 1px solid #a7a7a7;
+		width: 36px;
+		font-size: 36px;
+		display: inline-block;
+		margin: 0 20px;
+		padding: 16px;
+		text-align: center;
+		text-transform: uppercase;
+		background: #e3e3e3;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+	#selectedLetters div {
+		border: 1px solid #a7a7a7;
+		width: 36px;
+		font-size: 36px;
+		display: inline-block;
+		margin: 0 10px;
+		padding: 16px;
+		text-align: center;
+		text-transform: uppercase;
+		background: #e3e3e3;
+		border-radius: 10px;
+	}
+	.buttons {
+		text-align: center;
+		margin-bottom: 40px;
+	}
+	button#upatstvoBtn {
+		padding: 6px;
+		font-size: 18px;
+		background: #fffded;
+		border-radius: 10px;
+		border-color: transparent;
+		cursor: pointer;
+		line-height: 18px;
+		right: 380px;
+		position: absolute;
+		top: 60px;
+	}
+	button#submit {
+		padding: 20px 80px;
+		font-size: 20px;
+		background: #3bb379;
+		border-radius: 10px;
+		border-color: transparent;
+		cursor: pointer;
+		color: #fff;
+	}
+	button#novset {
+		padding: 6px;
+		font-size: 18px;
+		background: #fffded;
+		border-radius: 10px;
+		border-color: transparent;
+		line-height: 20px;
+		z-index: 100;
+		position: absolute;
+		cursor: pointer;
+		vertical-align: bottom;
+		margin-left: 20px;
+		right: 54px;
+		margin-top: 78px;
+	}
+	button#novaigra {
+		padding: 6px;
+		font-size: 18px;
+		background: #fffded;
+		border-radius: 10px;
+		border-color: transparent;
+		cursor: pointer;
+		right: 380px;
+		position: absolute;
+		line-height: 18px;
+	}
+	div#score {
+		background: #fffded;
+		font-size: 24px;
+		padding: 4px 20px;
+		border-radius: 10px 10px 0 0;
+		width: 600px;
+		margin: auto;
+		text-align: center;
+	}
+	div#playedWords {
+		background: #fffded;
+		width: 600px;
+		padding: 4px 20px 20px 20px;
+		border-radius: 0 0 10px 10px;
+		margin: 0 auto 20px auto;
+		height: 26px;
+		overflow-y: scroll;
+		text-align: center;
+	}
+	#playedWords div {
+		margin-bottom: 6px;
+	}
+	.modal {
+	  display: none; /* Скриено по дефолт */
+	  position: fixed; /* Останува на место дури и при скролање */
+	  z-index: 1; /* На врвот */
+	  left: 0;
+	  top: 0;
+	  width: 100%; /* Цела ширина */
+	  height: 100%; /* Цела висина */
+	  overflow: auto; /* Додадете скрол ако е потребно */
+	  background-color: rgba(0,0,0,0.4); /* Црна боја со малку прозирност */
+	}
+	.modal-content {
+		background-color: #f7f7f7;
+		margin: 10% auto;
+		padding: 1px 20px 20px 20px;
+		color: #333;
+		width: 20%;
+		text-align: center;
+		border-radius: 10px;
+	}
+	div#upatstvoModal .modal-content {
+		width: 60%;
+	}
+	button#yesBtn, button#novaBtn {
+		padding: 10px 30px;
+		border-radius: 10px;
+		margin: 0 60px 0 auto;
+		background: #3bb379;
+		color: #fff;
+		font-size: 16px;
+		border: none;
+		cursor: pointer;
+	}
+	button#noBtn, button#novanoBtn {
+		padding: 10px 30px;
+		border-radius: 10px;
+		margin: 0 auto 0 0;
+		background: #b33b3b;
+		color: #fff;
+		font-size: 16px;
+		border: none;
+		cursor: pointer;
+	}
+	button#noUpatstvoBtn, button#najmalBtn, button#nepostoiBtn {
+		padding: 10px 30px;
+		border-radius: 10px;
+		margin: auto;
+		background: #3bb379;
+		color: #fff;
+		font-size: 16px;
+		border: none;
+		cursor: pointer;
+	}
+	.loader {
+		position: fixed; /* Позиционирај го елементот на врвот од другите елементи */
+		z-index: 1000; /* Зголеми го z-index за да биде видлив над другите елементи */
+		left: 0;
+		top: 0;
+		width: 100%; /* Ширина на целиот екран */
+		height: 100%; /* Висина на целиот екран */
+		background: #8578d5e8; 
+		color: #fff;
+		display: flex; /* Користи flexbox за центрирање на содржината */
+		justify-content: center; /* Центрирај хоризонтално */
+		align-items: center; /* Центрирај вертикално */
+		font-size: 48px;
+	}
+	.tooltip {
+		position: relative;
+	}
+	.tooltip::before {
+		background-color: #f7f7f7;
+		border-radius: 10px;
+		color: #333;
+		content: attr(data-title);
+		display: none;
+		font-family: sans-serif;
+		font-size: 12px;
+		padding: 10px;
+		position: absolute;
+		top: 20px;
+		right: 5px;
+		z-index: 200;
+	}
+	.tooltip:hover::before {
+		display: block;
+	}
+	.footer {
+		position: relative;
+		bottom: 0;
+		text-align: center;
+		width: 100%;
+		font-size: 12px;
+		margin-top: 250px;
+	}
+	a {
+		color: #047017;
+	}
+	@media screen and (max-width: 1000px) {
+		div#letters, div#selectedLetters {
+			height: 52px;
+			padding: 20px 0px;
+		}
+		#letters div, #selectedLetters div {
+			margin: 0 8px 0px 8px;
+			padding: 4px;
+		}
+		button#submit {
+			margin-right: 0;
+			margin-bottom: 30px;
+		}
+		button#novset, button#novaigra{
+			right: 4px;
+			margin-top: -14px;
+		}
+		button#upatstvoBtn {
+			right: 4px;
+			top: 46px;
+		}
+		div#score {
+			width: 88%;
+			margin-top: 18px;
+		}
+		div#playedWords {
+			width: 88%;
+			font-size: 14px;
+			height: 56px;
+		}
+		.modal-content {
+			margin: 60% auto;
+			width: 80%;
+		}
+		.footer {
+			margin-top: 0px;
+		}
+	}
+    </style>
+</head>
+<body>
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		// Прикажи го лоадерот
+		showLoader();
+		// Скриј го лоадерот по 2 секунди
+		setTimeout(hideLoader, 2000);
+	});
+	function showLoader() {
+		// Креирај нов елемент
+		var loader = document.createElement("div");
+		loader.className = "loader";
+		// Додади текст во елементот
+		loader.innerHTML = "<p style='text-align:center;'>ЗБОРКО<br>Најдете што подолг збор &#127774;<br>Среќно!</p>";
+		// Додади го елементот во DOM
+		document.body.appendChild(loader);
+	}
+	function hideLoader() {
+		// Најди го елементот во DOM
+		var loader = document.querySelector(".loader");
+		// Отстрани го елементот од DOM
+		document.body.removeChild(loader);
+	}
+</script>
+<div class="container">
+	<div id="upatstvoModal" class="modal">
+	  <div class="modal-content">
+		<p class="upatstvo">Целта е од генерираните букви да создадете што подолг збор.</p><p class="upatstvo">Со клик на буквите од горниот ред, тие се спуштаат во долниот ред каде се испишува зборот што го играте.</p><p class="upatstvo">Ако не ви се допаѓа зборот што сте го направиле или сте згрешиле може да кликате еднаш по еднаш на буквите во долниот ред за да вратите по една буква наназад или напревете двоен клик на истото место за да ги вратите сите буквите во почетна позиција.</p><p class="upatstvo">Ако воопшто не ви се допаѓаат генерираните букви или не ви текнува ниту еден збор од нив, тогаш може да кликнете на  &#11119;  и ќе се генерираат нови 5 букви, но ќе ви се одземат 2 бода.</p><p class="upatstvo">
+		Кога сте задоволни од зборот кликнете на „ГОТОВО“ па вашиот збор ќе биде проверен дали го има во речникот и ако го има ќе се пренесе под „Тековен резултат“ и ќе ви пресмета бодови. Секоја буква носи еден бод. Ако го имате истиот збор со компјутерот тогаш добивате плус 2 бода. А ако имате збор кој има исто или повеќе букви и притоа е различен од тој на компјутерот тогаш добивате плус 4 бодови.</p><p class="upatstvo">Услов е вашиот збор да не е помал од три букви и да го има во речникот на компјутерот.</p><p class="upatstvo">
+		Ако сакате да почнете нова игра со нула бодови тогаш кликнете на копчето  &#9850;  или само превчитајте ја страницата.</p><p class="upatstvo">Ако сметате дека имате зборови кои недостасуваат во речникот и ако сакате да помогнете ве молиме списокот со предлог зборови испратете го на: <a href="mailto:strumjan@gmail.com">strumjan@gmail.com.</a></p><p class="upatstvo">Благодариме за разбирањето и помошта.</p><p class="upatstvo">ЗБОРКО верзија 5.0<br />Сите предлози, забелешки и грешки, ве молам, пријавете ги на: <a href="mailto:strumjan@gmail.com">strumjan@gmail.com.</a></p>
+		<button id="noUpatstvoBtn" onclick="upatstvoAction()">ЗАТВОРИ</button>
+	  </div>
+	</div>
+	<div id="novaModal" class="modal">
+	  <div class="modal-content">
+		<p>Ако сакате да почнете нова игра со нула бодови, кликнете „ДА“.</p></p>Ако само проверувате што прави копчето, кликнете „НЕ“.</p>
+		<button id="novaBtn" onclick="novaAction()">ДА</button>
+		<button id="novanoBtn" onclick="novanoAction()">НЕ</button>
+	  </div>
+	</div>
+	<div id="najmalModal" class="modal">
+	  <div class="modal-content">
+		<p>Играниот збор треба да има најмалку три букви.</p>
+		<button id="najmalBtn" onclick="najmalAction()">ЗАТВОРИ</button>
+	  </div>
+	</div>
+	<div id="nepostoiModal" class="modal">
+	  <div class="modal-content">
+		<p>Зборот не е пронајден во речникот кој го користи играта и кој, и покрај тоа што содржи над 75000 зборови, сепак не е совршен и целосен.</p><p>Ако сметате дека имате зборови кои недостасуваат во речникот и ако сакате да помогнете ве молиме списокот со предлог зборови испратете го на: <a href="mailto:strumjan@gmail.com">strumjan@gmail.com.</a></p><p>Благодариме за разбирањето и помошта.</p>
+		<button id="nepostoiBtn" onclick="nepostoiAction()">ЗАТВОРИ</button>
+	  </div>
+	</div>
+
+	<div id="myModal" class="modal">
+	  <div class="modal-content">
+		<p>Ако сакате да ги смените сите букви со нов сет букви, кликнете „ДА“.</p></p>Ако само проверувате што прави копчето, кликнете „НЕ“.</p>
+		<button id="yesBtn" onclick="yesAction()">ДА</button>
+		<button id="noBtn" onclick="noAction()">НЕ</button>
+	  </div>
+	</div>
+	<button id="novaigra" class="tooltip" data-title="Нова игра" onclick="showNova()">&#9850;</button>
+	<button id="upatstvoBtn" class="tooltip" data-title="Упатство и правила" onclick="showUpatsvo()">?</button>
+	<div id="score">Тековен резултат: 0</div>
+    <div id="playedWords"></div>
+	<div class="gorenred">
+	<button id="novset" class="tooltip" data-title="Нов сет букви" onclick="showModal()">&#11119;</button>
+    <div id="letters">
+	</div>
+	</div>
+    <div id="selectedLetters"></div>
+	<div class="buttons">
+	<button id="submit">ГОТОВО</button>
+    </div>
+	<div class="footer">ЗБОРКО верзија 5.0<br />Сите предлози, забелешки и грешки, ве молам, пријавете ги на: <a href="mailto:strumjan@gmail.com">strumjan@gmail.com.</a></div>
+</div>
+<script>
+
+// Од кој до кој број се зборовите со дадената должина
+// 3 = 1:905
+// 4 = 906:3729
+// 5 = 3730:10562
+// 6 = 10563:20361
+// 7 = 20362:32577
+// 8 = 32578:45403
+// 9 = 45404:56917
+// 10 = 56918:65686
+// 11 = 65687:71614
+// 12 = 71615:75245
+
+// Буквите
+const letters = ['а', 'б', 'в', 'г', 'д', 'ѓ', 'е', 'ж', 'з', 'ѕ', 'и', 'ј', 'к', 'л', 'љ', 'м', 'н', 'њ', 'о', 'п', 'р', 'с', 'т', 'ќ', 'у', 'ф', 'х', 'ц', 'ч', 'џ', 'ш'];
+
+let availableLetters = [];
+let availableLettersCopy = [];
+let selectedLetters = [];
+let score = 0;
+let plusscore = 0;
+let playedWords = [];
+let odbranzbor = "";
+let nashzbor = "";
+let previousStates = [];
+
+// Генерирајте случајни букви
+function generateLetters(word) {
+    // 2 чекор: Пребарај го тој број во речникот
+    odbranzbor = word; // Ова претпоставува дека `word` е зборот што го добивте од PHP
+    // 3 чекор: Направи копија од odbranzbor
+    nashzbor = odbranzbor;
+    // 4 чекор: Дополни со случајно одбрани букви
+    while (odbranzbor.length < 5) {
+        let randomLetter = letters[Math.floor(Math.random() * letters.length)];
+        odbranzbor += randomLetter;
+    }
+
+    // 5 чекор: Измешај ги буквите
+    availableLetters = odbranzbor.split('').sort(() => Math.random() - 0.5);
+
+    // 6 чекор: Креирај копија од availableLetters
+    availableLettersCopy = availableLetters.slice();
+
+    // 7 чекор: Повикај ја функцијата displayLetters()
+    displayLetters();
+}
+
+// Земи го одбраниот збор
+fetch('zemizbor5.php')
+    .then(response => response.text())
+    .then(data => {
+        let word = JSON.parse(data);
+        // Сега можете да го користите зборот во вашата функција generateLetters
+		generateLetters(word);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
+
+// Функција врати ги сите
+function vratiSe() {
+//document.getElementById('clear').addEventListener('click', function() {
+    // Вратете ги буквите во availableLetters
+	availableLetters = availableLettersCopy.slice();
+    // Исчистете ги избраните букви
+    selectedLetters = [];
+    // Обновете го приказот
+    updateDisplay();
+	// Исчистете ја претходната состојба
+	previousStates = [];
+//});
+}
+
+// Копче Врати еден чекор
+function undoAction() {
+    if (previousStates.length > 0) {
+        // Вратете ја последната состојба
+        let previousState = previousStates.pop();
+        // Вратете ги буквите во availableLetters
+        availableLetters = previousState.availableLetters;
+        // Исчистете ги избраните букви
+        selectedLetters = previousState.selectedLetters;
+        // Обновете го приказот
+        updateDisplay();
+    }
+}
+
+
+// Секогаш кога правите промени на availableLetters или selectedLetters, зачувајте ја тековната состојба
+function makeChange() {
+    // Зачувајте ја тековната состојба
+    previousStates.push({
+        availableLetters: availableLetters.slice(),
+        selectedLetters: selectedLetters.slice()
+    });
+}
+
+// Копче Готово
+document.getElementById('submit').addEventListener('click', function() {
+	// Ако зборот е помал од три букви, прикажете порака на корисникот
+	if (selectedLetters.length < 3) {
+		//alert('Најмал дозволен збор е со три букви.');
+		showNajmal();
+		return;
+	}
+    // Проверка на точноста на зборот
+    let word = selectedLetters.join('');
+    fetch('proverizbor.php', {
+        method: 'POST',
+        body: JSON.stringify({word: word})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.validity === 'invalid') {
+            //alert('Зборот не е валиден.');
+			showNepostoi();
+            return;
+        }
+        // Пресметајте ги бодовите за избраниот збор
+		if (word === nashzbor) {
+			plusscore = 2; // Плус поени ако е ист зборот на играчот со одбраниот
+		} else if (word.length >= nashzbor.length) {
+			plusscore = 4; // Плус поени ако зборот на играчот е ист по должина или подолг од одбраниот
+		} else {
+			plusscore = 0;
+		}
+
+        let wordScore = selectedLetters.length;
+        score += wordScore + plusscore;
+		playedWords.push({word: word, score: wordScore, nashZbor: nashzbor, nashscore: nashzbor.length});
+        // Исчистете ги избраните букви
+        selectedLetters = [];
+        // Вратете ги буквите во availableLetters
+        availableLetters = [];
+		// Обновете го приказот
+            updateDisplay();
+		// Исчистете ја претходната состојба
+        previousStates = [];
+		//  Пресметај го резултатот
+		checkResult();
+        // Генерирајте нови букви
+        fetch('zemizbor5.php')
+        .then(response => response.text())
+        .then(data => {
+            let word = JSON.parse(data);
+            // Генерирајте нови букви со новиот збор
+            generateLetters(word);
+            
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+});
+
+
+
+// Копче Генерирај нови букви
+let modal = document.getElementById("myModal");
+let yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
+
+function showModal() {
+    // Прикажи го модалот
+    modal.style.display = "block";
+}
+
+function yesAction() {
+  // Изврши ја функцијата novSet ако корисникот кликна на „ДА“
+  novSet();
+  // Скриј го модалот
+  modal.style.display = "none";
+}
+
+function noAction() {
+  // Скриј го модалот ако корисникот кликна на „НЕ“
+  modal.style.display = "none";
+}
+
+yesBtn.onclick = yesAction;
+noBtn.onclick = noAction;
+
+
+function novSet () {
+	// Пресметајте негативни бодови
+	plusscore = -2;
+	let word = "без збор";
+	let wordScore = selectedLetters.length;
+	score += wordScore + plusscore;
+	playedWords.push({word: word, score: plusscore, nashZbor: nashzbor, nashscore: nashzbor.length});
+	//  Пресметај го резултатот
+	checkResult();
+    // Исчистете ги избраните букви
+    selectedLetters = [];
+	// Вратете ги буквите во availableLetters
+    availableLetters = [];
+    // Генерирајте нови букви
+     fetch('zemizbor5.php')
+        .then(response => response.text())
+        .then(data => {
+            let word = JSON.parse(data);
+            // Генерирајте нови букви со новиот збор
+            generateLetters(word);
+            // Обновете го приказот
+            updateDisplay();
+			// Исчистете ја претходната состојба
+			previousState = null;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+// Функција за најмал збор
+let modalNajmal = document.getElementById("najmalModal");
+function showNajmal() {
+    // Прикажи го модалот
+    modalNajmal.style.display = "block";
+}
+function najmalAction() {
+  modalNajmal.style.display = "none";
+}
+najmalBtn.onclick = najmalAction;
+
+// Функција за збор што не постои
+let modalNepostoi = document.getElementById("nepostoiModal");
+function showNepostoi() {
+    // Прикажи го модалот
+    modalNepostoi.style.display = "block";
+}
+function nepostoiAction() {
+  modalNepostoi.style.display = "none";
+}
+nepostoiBtn.onclick = nepostoiAction;
+
+// Функција за приказ на упатство и правила
+let modalUpatstvo = document.getElementById("upatstvoModal");
+function showUpatsvo() {
+    // Прикажи го модалот
+    modalUpatstvo.style.display = "block";
+}
+function upatstvoAction() {
+  modalUpatstvo.style.display = "none";
+}
+noUpatstvoBtn.onclick = upatstvoAction;
+
+// Функција за прашање по клик на копчето за нова игра
+let modalNova = document.getElementById("novaModal");
+function showNova() {
+    // Прикажи го модалот
+    modalNova.style.display = "block";
+}
+function novaAction() {
+  window.location.reload();
+  modalNova.style.display = "none";
+}
+function novanoAction() {
+  modalNova.style.display = "none";
+}
+novaBtn.onclick = novaAction;
+novanoBtn.onclick = novanoAction;
+
+// Функција за приказ на буквите
+function displayLetters() {
+    let lettersDiv = document.getElementById('letters');
+    lettersDiv.innerHTML = '';
+    for (let letter of availableLetters) {
+        let letterElement = document.createElement('div');
+        letterElement.textContent = letter;
+        letterElement.addEventListener('click', function() {
+            selectLetter(letter);
+        });
+        lettersDiv.prepend(letterElement);
+    }
+}
+
+// Функција за обновување на приказот
+function updateDisplay() {
+    displayLetters();
+    displaySelectedLetters();
+}
+
+// Функција за пресметка на бодовите
+function checkResult() {
+    document.getElementById('score').textContent = 'Тековен резултат: ' + score;
+    let playedWordsDiv = document.getElementById('playedWords');
+    playedWordsDiv.innerHTML = '';
+    for (let playedWord of playedWords) {
+		// Ако зборот има бодови, тогаш прикажи го
+		if (playedWord.score != 0) {
+			let wordElement = document.createElement('div');
+            wordElement.innerHTML = '<span style="text-transform: uppercase;">' + playedWord.word + '</span> (' + playedWord.score + ' букви)' + ' Нашиот збор е: ' + '<span style="text-transform: uppercase;">' + playedWord.nashZbor + '</span> (' + playedWord.nashscore + ' букви)';
+			playedWordsDiv.prepend(wordElement);
+		}
+	}
+}
+
+
+
+// Функција за селектирање на буква
+function selectLetter(letter) {
+	// Зачувај претходна состојба
+		makeChange();
+		
+    let index = availableLetters.indexOf(letter);
+    if (index > -1) {
+        availableLetters.splice(index, 1);
+        selectedLetters.push(letter);
+    }
+    // Обновете го приказот
+        updateDisplay();
+}
+
+// Функција за приказ на селектираните букви
+function displaySelectedLetters() {
+    let selectedLettersDiv = document.getElementById('selectedLetters');
+    selectedLettersDiv.innerHTML = '';
+    for (let letter of selectedLetters) {
+        let letterElement = document.createElement('div');
+        letterElement.textContent = letter;
+		let clickTimer = null;
+letterElement.addEventListener('click', function() {
+    if (clickTimer === null) {
+        clickTimer = setTimeout(function() {
+            undoAction(letter);
+            clickTimer = null;
+        }, 250); // Одложи извршување на 'click' настанот за 250ms
+    }
+});
+letterElement.addEventListener('dblclick', function() {
+    if (clickTimer !== null) {
+        clearTimeout(clickTimer); // Откажи 'click' настанот ако 'dblclick' настанот се случи прв
+        clickTimer = null;
+    }
+    vratiSe(letter);
+});
+
+        selectedLettersDiv.appendChild(letterElement);
+    }
+}
+
+// Почнете ја играта
+generateLetters(word);
+updateDisplay();
+
+	</script>
+</body>
+</html>
